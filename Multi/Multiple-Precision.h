@@ -68,3 +68,5 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c);//掛け算�
 int sinmpleDivide(int x, int y, int *z,int*w);//簡単な割り算を行う関数
 
 int divide(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d);//割り算を行う関数
+
+int isPrime(struct NUMBER a);//素数判定を行う関数

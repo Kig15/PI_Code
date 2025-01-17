@@ -622,4 +622,37 @@ switch(l){//商と余りの符号を判定
        }
  return 0;
 }
+
+int isPrime(struct NUMBER a){//素数判定を行う関数　素数なら1 合成数なら0 a<=1で-1
+    struct NUMBER one;
+    clearByZero(&one);
+    setInt(&one,1);
+    if(numComp(&a,&one) == -1 || numComp(&a,&one) == 0){
+        return -1;
+    }//a<=1の時は-1を返す
+
+
+    struct NUMBER temp,temp2,ans,amari;
+    clearByZero(&temp);
+    clearByZero(&temp2);
+    clearByZero(&ans);
+    clearByZero(&amari);
+    setInt(&temp2,2);
+    copyNumber(&a,&temp);
+
+     while(numComp(&a,&temp2) == 1){
+      
+            divide(temp,temp2,&ans,&amari);
+           if(isZero(&amari) == 0){
+               return 0;
+               }//割り切れた時は合成数
+
+           
+            oneIncrement(&temp2);
+        }
+
+    return 1;
+
+
+}
     

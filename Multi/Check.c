@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     srand((unsigned)time(NULL));
     
    
-
+/*
    struct NUMBER pi_temp;//円周率
    struct NUMBER pi;//円周率
 
@@ -165,11 +165,11 @@ int main(int argc, char *argv[])
     multiple(&six,&pi_temp,&pi);
     DispNumber(&pi);
 
-
+*/
     
 
 
-/*
+
     struct NUMBER a,b,c,d;
     clearByZero(&a);
     clearByZero(&b);
@@ -178,25 +178,51 @@ int main(int argc, char *argv[])
 
 
 
-    a.n[6] = 1;
-    setInt(&b,3);
-    //SetRnd(&a,3);
-    //SetRnd(&b,2);
-    divide(a,b,&c,&d);
-    //sub(&a,&b,&c);
-    DispNumber(&a); 
+   
+   // setInt(&b,3);
+
+for(int i = 3; i < 100; i++){
+ clearByZero(&a);
+    setInt(&a,i);
+    int ans = isPrime(a);
+    switch (ans)
+    {
+    case 1:
+        printf("--素数です--\n");
+        break;
+    case 0:
+        printf("合成数です\n");
+        break;
+    case -1:
+        printf("エラーです\n");
+        break;
+    
+    default:
+        printf("エラーです\n");
+        break;
+    }
+
+     DispNumber(&a); 
     printf("\n");
+}
+  
+    //SetRnd(&b,2);
+    //divide(a,b,&c,&d);
+    //sub(&a,&b,&c);
+   
+   /*
     DispNumber(&b);
     printf("\n");
     DispNumber(&c);
     printf("\n");
     DispNumber(&d);
     printf("\n");
+    */
 
 
   
   
-   */
+
    
 
 
