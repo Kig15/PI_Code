@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build Check.c",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+          "Check.c",
+          "Multiple-Precision.c",
+          "-o",
+          "program.out",
+          "-g"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Generated task to build Check.c with Hedder.c"
+      }
+    ]
+  }

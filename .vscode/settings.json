@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "multiple-precision.h": "c",
+        "stdlib.h": "c"
+    }
+}
