@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     setInt(&two,2);
     setInt(&three,3);
     setInt(&six,1);
-    NeedNum.n[5] = 1;
+    NeedNum.n[8] = 1;
     setInt(&a,100);
     //srandom((unsigned)time(NULL));
 
