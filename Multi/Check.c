@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     srand((unsigned)time(NULL));
     
    
-/*
+
    struct NUMBER pi_temp;//円周率
    struct NUMBER pi;//円周率
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     setInt(&two,2);
     setInt(&three,3);
     setInt(&six,1);
-    NeedNum.n[8] = 1;
+    NeedNum.n[7] = 1;
     setInt(&a,100);
     //srandom((unsigned)time(NULL));
 
@@ -165,11 +165,11 @@ int main(int argc, char *argv[])
     multiple(&six,&pi_temp,&pi);
     DispNumber(&pi);
 
-*/
+/**/
     
 
 
-
+/*
     struct NUMBER a,b,c,d;
     clearByZero(&a);
     clearByZero(&b);
@@ -210,7 +210,7 @@ for(int i = 3; i < 100; i++){
     //divide(a,b,&c,&d);
     //sub(&a,&b,&c);
    
-   /*
+   
     DispNumber(&b);
     printf("\n");
     DispNumber(&c);
