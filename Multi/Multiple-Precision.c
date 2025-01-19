@@ -59,6 +59,7 @@ if(keta > KETA){
 
 //構造体のコピー関数 bにaの値をコピーする
 void copyNumber(const struct NUMBER *a, struct NUMBER *b){
+    clearByZero(b);
     
     for(int i = 0; i < KETA; i++){
         b->n[i] = a->n[i];
@@ -111,6 +112,7 @@ int isZero(const struct NUMBER *a){
 
 //10倍する関数 正常終了で0を返す　異常終了で-1を返す
 int mulBy10(const struct NUMBER *a, struct NUMBER *b){
+    clearByZero(b);
     if(a->n[KETA - 1] != 0){
         return -1;
     }//オーバーフローを判定
@@ -126,6 +128,7 @@ int mulBy10(const struct NUMBER *a, struct NUMBER *b){
 
 //10分の1する関数 戻り値に余りを返す
 int divBy10(const struct NUMBER *a, struct NUMBER *b){
+    clearByZero(b);
     for(int i =1; i < KETA; i++){
         b->n[i - 1] = a->n[i];
     }
@@ -135,6 +138,7 @@ int divBy10(const struct NUMBER *a, struct NUMBER *b){
 
 //構造体に整数をセットする関数　正常終了で0を返す　異常終了で-1を返す
 int setInt(struct NUMBER *a, int x){
+    clearByZero(a);
     
     a->sign = (x < 0) ? -1 : 1;
     x = abs(x);
@@ -576,7 +580,7 @@ int divide(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d)
     changeAbs(&b);//絶対値を取得
 
    
-
+/*
     while(1)
    {
     if(numComp(&a,&b) == -1){
@@ -590,7 +594,66 @@ int divide(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d)
     copyNumber(&g,&a);
     oneIncrement(&k);
    }//割り算の処理
-   
+ */
+
+struct NUMBER f,e,temp;
+clearByZero(&f);
+clearByZero(&e);
+clearByZero(&temp);
+
+
+
+while(1){
+    if(numComp(&a,&b) == -1){
+        break;
+    }
+    copyNumber(&b,&f);
+    setInt(&e,1);
+
+    /*
+    printf("-----------------\n");
+    printf("a = ");
+    DispNumber(&a);
+    printf("\n");
+    printf("f = ");
+    DispNumber(&f);
+    printf("\n");
+    printf("e = ");
+    DispNumber(&e);
+    printf("\n");
+    printf("-----------------\n");
+    */
+
+
+    while(numComp(&a,&f) == 1){
+        mulBy10(&f,&temp);
+        copyNumber(&temp,&f);
+        mulBy10(&e,&temp);
+        copyNumber(&temp,&e);
+    }
+
+    if(numComp(&a,&f) == 0){
+        setInt(&a,0);
+        add(&k,&e,&temp);
+        copyNumber(&temp,&k);
+    }
+    else{//a < dの時
+        divBy10(&f,&temp);
+        copyNumber(&temp,&f);
+        sub(&a,&f,&temp);
+        copyNumber(&temp,&a);
+        divBy10(&e,&temp);
+        copyNumber(&temp,&e);
+        add(&k,&e,&temp);
+        copyNumber(&temp,&k);
+    }
+
+    
+    
+    
+
+ 
+}//割り算の処理 まとめて引くことによる高速化
    
     
 switch(l){//商と余りの符号を判定
@@ -653,6 +716,88 @@ int isPrime(struct NUMBER a){//素数判定を行う関数　素数なら1 合�
 
     return 1;
 
+
+}
+
+int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニュートンラプソン法で平方根を求める関数 正常終了1 異常終了-1
+    struct NUMBER x;//現在の平方根の近似値
+    struct NUMBER b;//1つ前のｘ
+    struct NUMBER c;//2つ前のｘ
+    struct NUMBER temp,temp1,two,N_copy;
+    clearByZero(&x);
+
+    if(numComp(N,&x) == -1)return -1;//N < 0の時はエラーを返す
+    if(isZero(N) == 0) copyNumber(N,d);//N = 0の時は0を返す
+    setInt(&x,1);
+    if(numComp(N,&x) == 0){ 
+         multiple(N,&keta,d);
+        return 1;
+        }//N = 1の時は1を返す
+    if(isKETA(keta) < 3) return -1;//桁数が3未満の時はエラーを返す　丸め誤差が下二桁だから
+
+    clearByZero(&temp);
+    clearByZero(&temp1);
+    setInt(&two,2);
+
+    multiple(N,&keta,&N_copy);//桁は3とかじゃなくて　10000みたいに表します
+
+    divide(N_copy,two,&temp,&temp1);
+    copyNumber(&temp,&x);
+    copyNumber(&x,&b);
+    copyNumber(&x,&c);
+    clearByZero(d);
+    clearByZero(&temp);
+    clearByZero(&temp1);
+   
+   
+    while(1){
+        
+        copyNumber(&b,&c);
+        copyNumber(&x,&b);
+        /*
+        printf("-----------------\n");
+        printf("x = ");
+        DispNumber(&x);
+        printf("\n");
+        printf("b = ");
+        DispNumber(&b);
+        printf("\n");
+        printf("c = ");
+        DispNumber(&c);
+        printf("\n");
+        printf("-----------------\n");
+        */
+
+        divide(N_copy,x,&temp,&temp1);
+        add(&x,&temp,&temp1);
+        divide(temp1,two,&x,&temp);
+        
+
+        sub(&b,&x,&temp1);
+        if(isKETA(temp1) < 3){
+            break;
+        }//収束判定
+        sub(&c,&x,&temp1);
+        if(isKETA(temp1) < 3){
+            if(numComp(&b,&x) == -1) copyNumber(&b,&x);
+            break;
+        }//振動判定（要検証、これでいいのかは不明　無限ループが起こったらここを疑って）
+
+
+    }
+    copyNumber(&x,d);
+    return 1;
+
+}
+
+int isKETA(const struct NUMBER a){//桁数を求める関数
+   int Keta =0;
+   for(int i = 0; i < KETA; i++){
+       if(a.n[i] != 0){
+           Keta = i + 1;
+       }
+   }
+   return Keta;
 
 }
     

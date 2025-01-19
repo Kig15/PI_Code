@@ -2,10 +2,13 @@
 #include <time.h>
 #include <stdlib.h>
 
+int TruePI(struct NUMBER pi);//返り値に桁
+
+
 int main(int argc, char *argv[])
 {
-    srand((unsigned)time(NULL));
     
+    int keta_num = 150;//求めたい桁数(偶数限定)
    
 
    struct NUMBER pi_temp;//円周率
@@ -16,7 +19,9 @@ int main(int argc, char *argv[])
    struct NUMBER two;
    struct NUMBER three;
    struct NUMBER six;
+   struct NUMBER RootThree;
    struct NUMBER NeedNum;//求めたい桁数
+   struct NUMBER six_M_RootThree;//6√3
 
    struct NUMBER a;//計算用の構造体
    struct NUMBER b;
@@ -32,11 +37,7 @@ int main(int argc, char *argv[])
     clearByZero(&pi);
     clearByZero(&pi_temp);
 
-    clearByZero(&one);
-    clearByZero(&one_m);
-    clearByZero(&two);
-    clearByZero(&three);
-    clearByZero(&six);
+    clearByZero(&RootThree);
     clearByZero(&NeedNum);
 
     clearByZero(&a);
@@ -55,11 +56,16 @@ int main(int argc, char *argv[])
     setInt(&one_m,-1);
     setInt(&two,2);
     setInt(&three,3);
-    setInt(&six,1);
-    NeedNum.n[7] = 1;
-    setInt(&a,100);
+    setInt(&six,6);
+    NeedNum.n[keta_num * 2] = 1; //求めたい桁数を設定(√3の計算のために2倍してます)
+    setInt(&a,1000); //ループ回数を指定
     //srandom((unsigned)time(NULL));
 
+    RootNutonRapson(&three,&RootThree,NeedNum);//ルート3を求める
+    multiple(&six,&RootThree,&six_M_RootThree);//6√3を求める
+
+    NeedNum.n[keta_num * 2] = 0;
+    NeedNum.n[keta_num] = 1; //求めたい桁数を設定
     
      
  while(numComp(&n,&a) == -1){
@@ -159,65 +165,56 @@ int main(int argc, char *argv[])
    oneIncrement(&n);
    
     printf("\n");
+    if(isZero(&temp2) == 0){
+        break;
+        }
     }
     
+    
+    printf("six_M_RootThree = ");
+    DispNumber(&six_M_RootThree);
+    printf("\n");
 
-    multiple(&six,&pi_temp,&pi);
+    printf("pi_temp         = ");
+    DispNumber(&pi_temp);
+    printf("\n");
+
+
+    multiple(&six_M_RootThree,&pi_temp,&pi);
+    
+    printf("pi              = ");
     DispNumber(&pi);
+    printf("\n");
+
+    printf("上から%d桁まで一致\n",TruePI(pi));
 
 /**/
     
 
-
-/*
+  /*
+    srand((unsigned)time(NULL));
     struct NUMBER a,b,c,d;
     clearByZero(&a);
     clearByZero(&b);
     clearByZero(&c);
     clearByZero(&d);
 
-
-
-   
-   // setInt(&b,3);
-
-for(int i = 3; i < 100; i++){
- clearByZero(&a);
-    setInt(&a,i);
-    int ans = isPrime(a);
-    switch (ans)
-    {
-    case 1:
-        printf("--素数です--\n");
-        break;
-    case 0:
-        printf("合成数です\n");
-        break;
-    case -1:
-        printf("エラーです\n");
-        break;
     
-    default:
-        printf("エラーです\n");
-        break;
-    }
-
-     DispNumber(&a); 
-    printf("\n");
-}
-  
-    //SetRnd(&b,2);
+    setInt(&a,314159265);
+   
+    RootNutonRapson(&a,&c,b);
     //divide(a,b,&c,&d);
     //sub(&a,&b,&c);
-   
-   
+    DispNumber(&a);
+    printf("\n");
     DispNumber(&b);
     printf("\n");
     DispNumber(&c);
     printf("\n");
     DispNumber(&d);
     printf("\n");
-    */
+    printf("上から%d桁まで一致\n",TruePI(a));
+      */
 
 
   
@@ -234,4 +231,37 @@ for(int i = 3; i < 100; i++){
 
 
  return 0;
+}
+
+int TruePI(struct NUMBER pi){
+    FILE *fp;
+    fp = fopen("pi.txt","r");
+
+    if(fp == NULL){
+        printf("ファイルが開けません\n");
+        return -1;
+    }
+
+    int j = 0;
+    for(int i = KETA - 1; i >= 0; i--){
+       if(pi.n[i] != 0){
+          j = i;
+          break;
+       }
+      
+    }
+    
+    int keeta = 0;
+    char c = 'o';
+    for(int i = j; i >= 0; i--){
+        c = fgetc(fp);
+       if( c != pi.n[i] + '0'){
+           break;
+       }
+       keeta++;
+    }
+
+
+    fclose(fp);
+    return keeta;
 }

@@ -1,4 +1,4 @@
-#define KETA 100
+#define KETA 320
 #include <stdio.h>
 
 
@@ -70,3 +70,7 @@ int sinmpleDivide(int x, int y, int *z,int*w);//簡単な割り算を行う関�
 int divide(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d);//割り算を行う関数
 
 int isPrime(struct NUMBER a);//素数判定を行う関数
+
+int RootNutonRapson(struct NUMBER *a, struct NUMBER *b,struct NUMBER keta);//ニュートンラプソン法を行う関数
+
+int isKETA(const struct NUMBER a);//桁数を求める関数
