@@ -3,10 +3,10 @@
 #include "Multiple-Precision.h"
 
 /*
-予め外で初期化をしている前提で関数を組む
+
 
 */
-//構造体の初期化関数
+//構造体の初期化関数 基数変換済み
 void clearByZero(struct NUMBER *a){
     for(int i = 0; i < KETA; i++){
         a->n[i] = 0;
@@ -14,7 +14,7 @@ void clearByZero(struct NUMBER *a){
     a -> sign  = 1;//符号を正に設定
 }
 
-//構造体の表示関数(constをつけることで値を変更できないようにする)
+//構造体の表示関数(constをつけることで値を変更できないようにする)  基数変換済み
 void DispNumber(const struct NUMBER *a){
  int j =0;
     switch (a->sign)
@@ -39,25 +39,33 @@ void DispNumber(const struct NUMBER *a){
     }//0サプ実装
 
   for(int  i = j; i >= 0; i--){
-    printf("%d",a->n[i]);
+    printf("%09lld",a->n[i]);
   } //各桁の値を表示
   
 }
 
-//構造体に乱数をセットする関数 srandomを使えるようにしよう
+//構造体に乱数をセットする関数 srandomを使えるようにしよう 基数変換済み
 void SetRnd(struct NUMBER *a, int keta){
 
-if(keta > KETA){
+if(keta > KETA * 9){
     return;
 }//桁数がオーバーしていたらエラーを返す
     a->sign = (random() % 2) ? 1 : -1;//符号をランダムに設定
-    for(int i = 0; i  < keta; i++){
-        a->n[i] = random() % 10;
+    int keta_kisuu = keta / 9;//桁数を9で割った商
+    int keta_amari = 1;//桁数を9で割った余り
+    for(int i = 0; i  < keta_kisuu; i++){
+        a->n[i] = random() % KISUU;//999,999,999までの数をランダムに設定
     }//各桁の値をランダムに設定
+
+    for(int i = 0; i < keta % 9; i++){
+        keta_amari *= 10;
+    }
+
+    a->n[keta_kisuu] = random() % keta_amari;//余りの桁数をランダムに設定
 
 }
 
-//構造体のコピー関数 bにaの値をコピーする
+//構造体のコピー関数 bにaの値をコピーする 基数変換済み
 void copyNumber(const struct NUMBER *a, struct NUMBER *b){
     clearByZero(b);
     
@@ -69,12 +77,12 @@ void copyNumber(const struct NUMBER *a, struct NUMBER *b){
    
 }
 
-//符号を取得する関数
+//符号を取得する関数 基数変換済み
 int getSign(const struct NUMBER *a){
     return a->sign;
 }
 
-//符号を設定する関数
+//符号を設定する関数 基数変換済み
 void setSign(struct NUMBER *a ,int b){
     if(b >= 0){
         a->sign = 1;
@@ -85,18 +93,18 @@ void setSign(struct NUMBER *a ,int b){
 
 }
 
-//絶対値を求める関数
+//絶対値を求める関数   基数変換済み
 void getAbs(const struct NUMBER *a, struct NUMBER *b){
    copyNumber(a,b);
     b->sign = 1;
 }
 
-//引数の値を絶対値に変更する関数
+//引数の値を絶対値に変更する関数  基数変換済み
 void changeAbs(struct NUMBER *a){
     a->sign = 1;
 }
 
-//0かどうかを判定する関数 正常終了で0を返す　異常終了で-1を返す
+//0かどうかを判定する関数 正常終了で0を返す　異常終了で-1を返す 基数変換済み
 int isZero(const struct NUMBER *a){
     if(a->sign == -1){
         return -1;
@@ -110,15 +118,17 @@ int isZero(const struct NUMBER *a){
     return 0;
 }
 
-//10倍する関数 正常終了で0を返す　異常終了で-1を返す
+//10倍する関数 正常終了で0を返す　異常終了で-1を返す 基数変換済み(10億進数としてみてるため、値を10倍するのではなく、桁をずらすだけ)
 int mulBy10(const struct NUMBER *a, struct NUMBER *b){
     clearByZero(b);
-    if(a->n[KETA - 1] != 0){
+    if(a->n[KETA - 1] > 0){
         return -1;
     }//オーバーフローを判定
+
     for(int i = 0; i < KETA - 1; i++){
-        b->n[i + 1] = a->n[i];
+        b->n[i+1] = a->n[i];
     }
+
     b->n[0] = 0;
     b->sign = a->sign;
     return 0;//正常終了
@@ -126,8 +136,8 @@ int mulBy10(const struct NUMBER *a, struct NUMBER *b){
     //一応bの初期化も行っているから、わざわざclearByZeroを呼び出す必要はない
 }
 
-//10分の1する関数 戻り値に余りを返す
-int divBy10(const struct NUMBER *a, struct NUMBER *b){
+//10分の1する関数 戻り値に余りを返す   基数変換済み(10億進数としてみてるため、値を10分の1するのではなく、桁をずらすだけ)
+long long divBy10(const struct NUMBER *a, struct NUMBER *b){
     clearByZero(b);
     for(int i =1; i < KETA; i++){
         b->n[i - 1] = a->n[i];
@@ -136,16 +146,16 @@ int divBy10(const struct NUMBER *a, struct NUMBER *b){
     return a->n[0];
 }
 
-//構造体に整数をセットする関数　正常終了で0を返す　異常終了で-1を返す
-int setInt(struct NUMBER *a, int x){
+//構造体に整数をセットする関数　正常終了で0を返す　異常終了で-1を返す 基数変換済み
+int setInt(struct NUMBER *a, long long x){
     clearByZero(a);
     
     a->sign = (x < 0) ? -1 : 1;
-    x = abs(x);
+    x = llabs(x);
  
     for (int i = 0; i < KETA; i++) {
-        a->n[i] = x % 10;
-        x /= 10;
+        a->n[i] = x % KISUU;
+        x /= KISUU;
         if(x == 0){
             break;
         }
@@ -190,7 +200,7 @@ int numComp(struct NUMBER *a, struct NUMBER *b){
 
 //足し算を行う関数 正常１を返す　異常-1を返す
 int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
-    int carry =0;
+    long long carry =0;
     clearByZero(c);
     if((a->sign ==1) && (b->sign ==-1)){
         struct NUMBER d;
@@ -210,8 +220,8 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
         c->sign = -1;
         for(int i =0; i < KETA; i++){
         carry += a->n[i] + b->n[i];
-        c->n[i] = carry % 10;
-        carry /= 10;
+        c->n[i] = carry % KISUU;
+        carry /= KISUU;
     
     }
     }
@@ -219,8 +229,8 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
         c->sign = 1;
         for(int i =0; i < KETA; i++){
         carry += a->n[i] + b->n[i];
-        c->n[i] = carry % 10;
-        carry /= 10;
+        c->n[i] = carry % KISUU;
+        carry /= KISUU;
     
     }
     }
@@ -331,7 +341,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
           high = 0;
        }
        else if((d.n[i] -high) < e.n[i]){
-          c->n[i] = d.n[i] - high + 10 - e.n[i];
+          c->n[i] = d.n[i] - high + KISUU - e.n[i];
           high = 1;
        }
        else{//(a->n[i] - high) == b->n[i]の時
@@ -354,7 +364,8 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
           high = 0;
        }
        else if((e.n[i] - high) < d.n[i]){
-          c->n[i] = e.n[i] - high + 10 - d.n[i];
+        
+          c->n[i] = e.n[i] - high + KISUU - d.n[i];
           high = 1;
        }
        else{
@@ -376,7 +387,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
           high = 0;
        }
        else if((a->n[i] -high) < b->n[i]){
-          c->n[i] = a->n[i] - high + 10 - b->n[i];
+          c->n[i] = a->n[i] - high + KISUU - b->n[i];
           high = 1;
        }
        else{//(a->n[i] - high) == b->n[i]の時
@@ -396,7 +407,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
           high = 0;
        }
        else if((b->n[i] - high) < a->n[i]){
-          c->n[i] = b->n[i] - high + 10 - a->n[i];
+          c->n[i] = b->n[i] - high + KISUU - a->n[i];
           high = 1;
        }
        else{
@@ -417,7 +428,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
 }
 
 //簡単な掛け算を行う関数
-int simpleMultiple(int a, int b , int *c){
+int simpleMultiple(long long a, long long b , long long *c){
    int i =b;
    *c = 0;
   /*
@@ -446,7 +457,8 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
    clearByZero(&d);
    clearByZero(&e);
    clearByZero(c);
-   int h =0,l =0;
+   long long h =0;
+   int l =0;
 
    
    if(getSign(a) == -1 && getSign(b) == 1){
@@ -461,9 +473,17 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
    for(int i =0; i < KETA; i++){
     for(int j = 0; j < KETA; j++){
        d.n[j] += h;
-       simpleMultiple(a->n[j],b->n[i],&h);
-       d.n[j] += h % 10;
-       h /= 10;
+
+       
+
+       if(a->n[j] == 0 || b->n[i] == 0){
+           h = 0;
+           continue;
+       }
+       //simpleMultiple(a->n[j],b->n[i],&h); <--ゴミ
+       h = a->n[j] * b->n[i];
+       d.n[j] += h % KISUU;
+       h /= KISUU;
 
     }
     if(h != 0){
@@ -603,14 +623,15 @@ clearByZero(&temp);
 
 
 
-while(1){
+//while(1){
+for(int i = 0; i < 10; i++){
     if(numComp(&a,&b) == -1){
         break;
     }
     copyNumber(&b,&f);
     setInt(&e,1);
 
-    /*
+    
     printf("-----------------\n");
     printf("a = ");
     DispNumber(&a);
@@ -621,35 +642,49 @@ while(1){
     printf("e = ");
     DispNumber(&e);
     printf("\n");
-    printf("-----------------\n");
-    */
+   
+   /* */
 
 
-    while(numComp(&a,&f) == 1){
+    while(numComp(&a,&f) == 1){//a > dの時
         mulBy10(&f,&temp);
         copyNumber(&temp,&f);
         mulBy10(&e,&temp);
         copyNumber(&temp,&e);
+        printf("aaa\n");
     }
 
-    if(numComp(&a,&f) == 0){
+    if(numComp(&a,&f) == 0){//a = dの時
         setInt(&a,0);
         add(&k,&e,&temp);
         copyNumber(&temp,&k);
+        printf("bbb\n");
     }
     else{//a < dの時
+       
         divBy10(&f,&temp);
         copyNumber(&temp,&f);
         sub(&a,&f,&temp);
+          printf("a = ");
+    DispNumber(&a);
+    printf("\n");
+      printf("f = ");
+    DispNumber(&f);
+    printf("\n");
+      printf("a = ");
+    DispNumber(&temp);
+    printf("\n");
         copyNumber(&temp,&a);
+
         divBy10(&e,&temp);
         copyNumber(&temp,&e);
         add(&k,&e,&temp);
         copyNumber(&temp,&k);
+        printf("ccc\n");
     }
 
     
-    
+     printf("-----------------\n");
     
 
  

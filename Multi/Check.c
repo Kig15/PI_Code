@@ -13,11 +13,14 @@ int TruePI(struct NUMBER pi);//返り値に桁
 
 int main(int argc, char *argv[])
 {
+    
     struct timeval tv;
     double start,end;
     gettimeofday(&tv,NULL);
     start = tv.tv_sec + tv.tv_usec * 1e-6;
-    
+
+
+    /*
     int keta_num = 100;//求めたい桁数(偶数限定)
    
 
@@ -198,10 +201,10 @@ int main(int argc, char *argv[])
 
     printf("上から%d桁まで一致\n",TruePI(pi));
 
-/**/
+*/
     
 
-  /*
+  
     srand((unsigned)time(NULL));
     struct NUMBER a,b,c,d;
     clearByZero(&a);
@@ -210,10 +213,17 @@ int main(int argc, char *argv[])
     clearByZero(&d);
 
     
-    setInt(&a,314159265);
+    SetRnd(&a,40);
+    SetRnd(&b,6);
+    
+    
+    //setInt(&a,854986428640463);
+    //setInt(&b,583896384892894);
+
+    
    
-    RootNutonRapson(&a,&c,b);
-    //divide(a,b,&c,&d);
+    //RootNutonRapson(&a,&c,b);
+    divide(a,b,&c,&d);
     //sub(&a,&b,&c);
     DispNumber(&a);
     printf("\n");
@@ -223,8 +233,9 @@ int main(int argc, char *argv[])
     printf("\n");
     DispNumber(&d);
     printf("\n");
-    printf("上から%d桁まで一致\n",TruePI(a));
-      */
+
+    //printf("上から%d桁まで一致\n",TruePI(a));
+     /* */
 
 
   
