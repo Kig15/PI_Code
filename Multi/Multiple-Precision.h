@@ -1,4 +1,4 @@
-#define KETA 320
+#define KETA 210
 #include <stdio.h>
 
 

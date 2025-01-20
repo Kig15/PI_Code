@@ -1,14 +1,24 @@
 #include "Multiple-Precision.h"
 #include <time.h>
 #include <stdlib.h>
+#include <sys/time.h>
+
+
+
+
 
 int TruePI(struct NUMBER pi);//返り値に桁
 
 
+
 int main(int argc, char *argv[])
 {
+    struct timeval tv;
+    double start,end;
+    gettimeofday(&tv,NULL);
+    start = tv.tv_sec + tv.tv_usec * 1e-6;
     
-    int keta_num = 150;//求めたい桁数(偶数限定)
+    int keta_num = 100;//求めたい桁数(偶数限定)
    
 
    struct NUMBER pi_temp;//円周率
@@ -58,7 +68,7 @@ int main(int argc, char *argv[])
     setInt(&three,3);
     setInt(&six,6);
     NeedNum.n[keta_num * 2] = 1; //求めたい桁数を設定(√3の計算のために2倍してます)
-    setInt(&a,1000); //ループ回数を指定
+    setInt(&a,100000); //ループ回数を指定
     //srandom((unsigned)time(NULL));
 
     RootNutonRapson(&three,&RootThree,NeedNum);//ルート3を求める
@@ -228,7 +238,10 @@ int main(int argc, char *argv[])
 
    
     
+    gettimeofday(&tv,NULL);
+    end = tv.tv_sec + tv.tv_usec * 1e-6;
 
+    printf("所要時間 = %f\n",end - start);
 
  return 0;
 }
