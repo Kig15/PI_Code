@@ -852,14 +852,80 @@ int isKETA(const struct NUMBER a){//桁数を求める関数
 
 }
     
-/*
+/**/
 int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束の式で逆数を求める式
-   // struct NUMBER x;//現在の平方根の近似値
-   //struct NUMBER y;//1つ前のｘ
-   //struct NUMBER h;//作業用の値
-   //struct NUMBER g;//収束判定用の値
+    struct NUMBER x;//現在の平方根の近似値
+    struct NUMBER y;//1つ前のｘ
+    struct NUMBER h;//作業用の値
+    struct NUMBER g;//収束判定用の値
+
+    struct NUMBER temp;
+    struct NUMBER temp1;
+
+    int keta_num = isKETA(keta);
+    if(keta_num < 3) return -1;//桁数が3未満の時はエラーを返す　丸め誤差が下二桁だから
+    int keta_a = isKETA(a);
+    int sign = getSign(&a);
+    //clearByZero(&x);
+    //clearByZero(&y);
+    //clearByZero(&h);
+    //clearByZero(&g);
+    //clearByZero(&temp);
+    clearByZero(b);
+
+    int temp_int = keta_num - keta_a;
+    if(temp_int > 0){
+        setInt(&x,1);
+        temp_int -= 1;
+        DispNumber(&x);
+        printf("\n%d\n",temp_int);
+        fflush(stdout);
+        mulByN(x,&temp,temp_int);
+        DispNumber(&temp);
+        fflush(stdout);
+
+        copyNumber(&temp,&x);
+        setInt(&temp1,2);
+        multiple(&x,&temp1,&temp);
+        copyNumber(&temp,&x);
+        //x = 0.2 * 10^(-keta_a) * 10^(keta_num) の初期値を求める処理
+
+        while(1){
+            copyNumber(&x,&y);//y = x
+
+            multiple(&a,&y,&temp);
+            sub(&keta,&temp,&h);//h = (1.0 * keta) - a * y
+
+            multiple(&h,&h,&temp);
+            add(&h,&temp,&temp1);
+            add(&keta,&temp1,&temp);
+            multiple(&y,&temp,&x);//x = y * (1.0 * keta + h + h * h)の計算
+
+            copyNumber(&h,&g);
+            setSign(&g,1);   //g = fabs(h)
+
+            if(isKETA(g) < 3){
+                break;
+            }//収束判定
+        }
+        copyNumber(&x,b);
+        setSign(b,sign);
+
+        return 0;
+
+
+    }
+    else{//(temp) < 0
+    setInt(b,0);
+    setSign(b,1);
+    return -1;
+
+    }
+
+
+
 }
-*/
+
 
 int mulByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nでかける関数 正常終了で0を返す　異常終了で-1を返す
     int slide = n / 9;
@@ -873,10 +939,11 @@ int mulByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで�
         slide--;
     }//どうあがいても消される桁を消す(ちょっとおもいかも)
 
+    /*
     printf("a = \n");
     DispNumber(&a);
     printf("\n");
-
+    */
 
    long long ten = 1,ten2 =1;
     clearByZero(b);
@@ -888,7 +955,7 @@ int mulByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで�
         ten2 *= 10;
     }//10^あまりを求める
 
-     printf("ten = %lld\n",ten);
+     //printf("ten = %lld\n",ten);
 
     for(int i =0; i < KETA-1; i++){
         if(a.n[i] != 0){

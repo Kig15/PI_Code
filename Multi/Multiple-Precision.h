@@ -87,3 +87,5 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta);//3次収束�
 int mulByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで掛ける関数
 
 int divByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで割る関数
+
+int divide_in(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d);//逆数で割り算を行う関数
