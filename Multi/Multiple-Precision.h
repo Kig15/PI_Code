@@ -81,3 +81,9 @@ int isPrime(struct NUMBER a);//素数判定を行う関数
 int RootNutonRapson(struct NUMBER *a, struct NUMBER *b,struct NUMBER keta);//ニュートンラプソン法を行う関数
 
 int isKETA(const struct NUMBER a);//桁数を求める関数
+
+int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta);//3次収束の式で逆数を求める関数
+
+int mulByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで掛ける関数
+
+int divByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで割る関数

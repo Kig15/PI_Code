@@ -213,17 +213,18 @@ int main(int argc, char *argv[])
     clearByZero(&d);
 
     
-    SetRnd(&a,40);
-    SetRnd(&b,6);
+   
     
     
     //setInt(&a,854986428640463);
     //setInt(&b,583896384892894);
 
     
-   
+    SetRnd(&a,35);
+    mulByN(a,&b,10);
+    divByN(a,&c,10);
     //RootNutonRapson(&a,&c,b);
-    divide(a,b,&c,&d);
+    //divide(a,b,&c,&d);
     //sub(&a,&b,&c);
     DispNumber(&a);
     printf("\n");
@@ -233,6 +234,7 @@ int main(int argc, char *argv[])
     printf("\n");
     DispNumber(&d);
     printf("\n");
+    
 
     //printf("上から%d桁まで一致\n",TruePI(a));
      /* */

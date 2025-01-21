@@ -827,12 +827,148 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
 
 int isKETA(const struct NUMBER a){//桁数を求める関数
    int Keta =0;
-   for(int i = 0; i < KETA; i++){
-       if(a.n[i] != 0){
-           Keta = i + 1;
-       }
-   }
+   int j = 0;
+   long long temp = 0;  
+   for(int i = KETA -1; i >= 0; i--){
+        if(a.n[i] != 0){
+            j = i;
+            break;
+        }
+    }//0サプで最大の桁のとこを求めるlog10
+    temp = a.n[j];
+    for(int i = 0; i < 9; i++){
+        temp /= 10;
+        Keta++;
+        if(temp == 0){
+            break;
+        }
+        
+    }
+    //一番上の桁の桁数を求める
+    Keta += (9 * j);//それに9をかけて、それ以外の桁数を求める
+
+   
    return Keta;
 
 }
     
+/*
+int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束の式で逆数を求める式
+   // struct NUMBER x;//現在の平方根の近似値
+   //struct NUMBER y;//1つ前のｘ
+   //struct NUMBER h;//作業用の値
+   //struct NUMBER g;//収束判定用の値
+}
+*/
+
+int mulByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nでかける関数 正常終了で0を返す　異常終了で-1を返す
+    int slide = n / 9;
+    int amari = n % 9;
+
+    clearByZero(b);
+    if(amari != 0){
+    while(slide > 0){
+        mulBy10(&a,b);
+        copyNumber(b,&a);
+        slide--;
+    }//どうあがいても消される桁を消す(ちょっとおもいかも)
+
+    printf("a = \n");
+    DispNumber(&a);
+    printf("\n");
+
+
+   long long ten = 1,ten2 =1;
+    clearByZero(b);
+
+    for(int i =0; i < (9 - amari); i++){
+        ten *= 10;
+    }//10^(9-あまり)を求める
+    for(int i =0; i < amari; i++){
+        ten2 *= 10;
+    }//10^あまりを求める
+
+     printf("ten = %lld\n",ten);
+
+    for(int i =0; i < KETA-1; i++){
+        if(a.n[i] != 0){
+            b->n[i] += (a.n[i] % ten) * ten2;
+            b->n[i + 1] += a.n[i] / ten;
+             
+        }
+    }
+    b->n[KETA-1] += (a.n[KETA-1] % ten) * ten;
+
+   setSign(b,getSign(&a));
+
+   }
+   else{//amari == 0
+
+    while(slide > 0){
+        mulBy10(&a,b);
+        copyNumber(b,&a);
+        slide--;
+    }//どうあがいても消される桁を消す(ちょっとおもいかも)
+
+
+   }
+
+    return 0;
+
+}
+
+int divByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで割る関数 正常終了で0を返す　異常終了で-1を返す
+   int slide = n / 9;
+   int amari = n % 9;
+
+    clearByZero(b);
+
+   if(amari != 0){
+    while(slide > 0){
+        divBy10(&a,b);
+        copyNumber(b,&a);
+        slide--;
+    }//どうあがいても消される桁を消す(ちょっとおもいかも)
+/*
+    printf("a = \n");
+    DispNumber(&a);
+    printf("\n");
+*/
+
+    long long ten = 1,ten2 =1;
+    clearByZero(b);
+
+    for(int i =0; i < (9 - amari); i++){
+        ten *= 10;
+    }//10^(9-あまり)を求める
+    for(int i =0; i < amari; i++){
+        ten2 *= 10;
+    }//10^あまりを求める
+    
+    //printf("ten = %lld\n",ten);
+
+    for(int i =0; i < KETA-1; i++){
+        if(a.n[i] != 0){
+            b->n[i] += a.n[i] / ten2;
+             if(a.n[i+1] != 0){
+                b->n[i] += (a.n[i+1] % ten2) * ten;
+             }
+        }
+    }
+     b->n[KETA-1] += a.n[KETA-1] / ten;
+
+   
+
+   }
+   else{//amari == 0
+
+    while(slide > 0){
+        divBy10(&a,b);
+        copyNumber(b,&a);
+        slide--;
+    }//どうあがいても消される桁を消す(ちょっとおもいかも)
+
+   }
+
+    return 0;
+}
