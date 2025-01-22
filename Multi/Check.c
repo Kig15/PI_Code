@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
     //setInt(&b,583896384892894);
 
     
-    setInt(&a,9);
+    setInt(&a,1);
     printf("%d\n",inverse3(a,&b,NeedNum));
     
     //RootNutonRapson(&a,&c,b);

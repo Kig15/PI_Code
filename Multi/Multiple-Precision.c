@@ -862,10 +862,27 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
     struct NUMBER temp;
     struct NUMBER temp1;
 
+    
+
+    if(isZero(&a) == 0) return -1;//a = 0の時はエラーを返す
+    
+
     int keta_num = isKETA(keta);
     if(keta_num < 3) return -1;//桁数が3未満の時はエラーを返す　丸め誤差が下二桁だから
     int keta_a = isKETA(a);
     int sign = getSign(&a);
+
+    setInt(&temp,1);
+    if(numComp(&a,&temp) == 0){//a = 1の時
+        setInt(b,1);
+        setSign(b,1);
+    }
+     setInt(&temp,-1);
+    if(numComp(&a,&temp) == 0){//a = -1の時
+        setInt(b,1);
+        setSign(b,-1);
+    }
+
     //clearByZero(&x);
     //clearByZero(&y);
     //clearByZero(&h);
@@ -877,13 +894,7 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
     if(temp_int > 0){
         setInt(&x,1);
         temp_int -= 1;
-        DispNumber(&x);
-        printf("\n%d\n",temp_int);
-        fflush(stdout);
         mulByN(x,&temp,temp_int);
-        DispNumber(&temp);
-        fflush(stdout);
-
         copyNumber(&temp,&x);
         setInt(&temp1,2);
         multiple(&x,&temp1,&temp);
@@ -891,19 +902,40 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
         //x = 0.2 * 10^(-keta_a) * 10^(keta_num) の初期値を求める処理
 
         while(1){
+            printf("-----------------\n");
             copyNumber(&x,&y);//y = x
+            printf("y = ");
+            DispNumber(&y);
+            printf("\n");
 
             multiple(&a,&y,&temp);
             sub(&keta,&temp,&h);//h = (1.0 * keta) - a * y
+            printf("h = ");
+            DispNumber(&h);
+            printf("\n");
 
             multiple(&h,&h,&temp);
-            add(&h,&temp,&temp1);
-            add(&keta,&temp1,&temp);
-            multiple(&y,&temp,&x);//x = y * (1.0 * keta + h + h * h)の計算
+            divByN(temp,&temp1,keta_num -1 );
+
+            printf("h * h = ");
+            DispNumber(&temp1);
+            printf("\n");
+
+            add(&h,&temp1,&temp);
+            add(&keta,&temp,&temp1);
+            multiple(&y,&temp1,&x);
+            divByN(x,&temp,keta_num - 1);
+            copyNumber(&temp,&x);//x = y * (1.0 * keta + h + h * h)の計算
+             printf("x = ");
+            DispNumber(&x);
+            printf("\n");
 
             copyNumber(&h,&g);
             setSign(&g,1);   //g = fabs(h)
-
+             printf("g = ");
+            DispNumber(&g);
+            printf("\n");
+            printf("-----------------\n");
             if(isKETA(g) < 3){
                 break;
             }//収束判定
