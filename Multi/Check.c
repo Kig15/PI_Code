@@ -214,19 +214,26 @@ int main(int argc, char *argv[])
     //int keta_num = 10;//求めたい桁数(偶数限定)
     struct NUMBER NeedNum;//求めたい桁数
     clearByZero(&NeedNum);
-    NeedNum.n[0] = 10000; //求めたい桁数を設定
+    NeedNum.n[11] = 10; //求めたい桁数を設定
     
     
     //setInt(&a,854986428640463);
     //setInt(&b,583896384892894);
 
     
-    setInt(&a,1);
-    printf("%d\n",inverse3(a,&b,NeedNum));
+    setInt(&a,12);
+    RootNutonRapson(&a,&b,NeedNum);
+    //printf("%d\n",inverse3(a,&b,NeedNum));
     
     //RootNutonRapson(&a,&c,b);
     //divide(a,b,&c,&d);
     //sub(&a,&b,&c);
+
+    multiple(&a,&NeedNum,&c);
+    multiple(&c,&NeedNum,&d);
+    multiple(&d,&NeedNum,&c);
+    clearByZero(&d);
+
     DispNumber(&a);
     printf("\n");
     DispNumber(&b);
