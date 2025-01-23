@@ -294,7 +294,7 @@ int sub(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
     int l;//lは0 X * Y, 1 X * (-Y), 2 (-X) * Y, 3 (-X) * (-Y)
     clearByZero(c);
     if(numComp(a,b) == 0){
-        clearByZero(c);
+        
         return 1;
     }//a == bの時は0を返す
 
@@ -451,7 +451,7 @@ int simpleMultiple(long long a, long long b , long long *c){
   
 }
 
-//掛け算を行う関数(まだ未完成　4×5以上の計算になるとなぜか－になるバグ発生中)
+//掛け算を行う関数()
 int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
    struct NUMBER d,e;
    clearByZero(&d);
@@ -469,9 +469,36 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
     }
    //符号の判定
 
+   int a_keta = 0;
+   int b_keta = 0;
 
-   for(int i =0; i < KETA; i++){
-    for(int j = 0; j < KETA; j++){
+   for(int i = KETA - 2; i >= 0; i--){
+       if(a->n[i] != 0){
+            if(a_keta == 0){
+                a_keta = i;
+            }
+          
+       }
+
+       if(b->n[i] != 0){
+            if(b_keta == 0){
+                b_keta = i;
+            }
+           
+       }
+
+       if(a_keta != 0 && b_keta != 0){
+           break;
+        }
+
+      
+   }//0サプ実装
+
+   
+
+
+   for(int i =0; i <= b_keta + 1; i++){
+    for(int j = 0; j <= a_keta+ 1; j++){
        d.n[j] += h;
 
        
@@ -617,9 +644,9 @@ int divide(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d)
  */
 
 struct NUMBER f,e,temp;
-clearByZero(&f);
-clearByZero(&e);
-clearByZero(&temp);
+//clearByZero(&f);
+//clearByZero(&e);
+//clearByZero(&temp);
 
 
 int keta_a = 0;
@@ -632,7 +659,7 @@ while(1){
     copyNumber(&b,&f);
     setInt(&e,1);
 
-    /* 
+     /*
     printf("-----------------\n");
     printf("a = ");
     DispNumber(&a);
@@ -777,17 +804,17 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     struct NUMBER x;//現在の平方根の近似値
     struct NUMBER b;//1つ前のｘ
     struct NUMBER c;//2つ前のｘ
-    struct NUMBER temp,temp1,two,N_copy;
+    struct NUMBER temp,temp1,temp2,two,N_copy;
     clearByZero(&x);
     int keta_temp = isKETA(keta);
 
-    mulByN(keta,&temp,keta_temp);
+    mulByN(keta,&temp,keta_temp - 1);
     copyNumber(&temp,&keta);
-    mulByN(keta,&temp,keta_temp);
+    mulByN(keta,&temp,keta_temp - 1);
     copyNumber(&temp,&keta);
-    printf("keta = ");
-    DispNumber(&temp);
-    printf("\n");
+    int keta_temp2 = isKETA(keta);
+   // printf("keta = %d\n",keta_temp2);
+    
 
     if(numComp(N,&x) == -1)return -1;//N < 0の時はエラーを返す
     if(isZero(N) == 0) copyNumber(N,d);//N = 0の時は0を返す
@@ -798,24 +825,31 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
         }//N = 1の時は1を返す
     if(isKETA(keta) < 3) return -1;//桁数が3未満の時はエラーを返す　丸め誤差が下二桁だから
 
-    clearByZero(&temp);
-    clearByZero(&temp1);
+    
+    //clearByZero(&temp);
+    //clearByZero(&temp1);
     setInt(&two,2);
 
     multiple(N,&keta,&N_copy);//桁は3とかじゃなくて　10000みたいに表します
 
-    divide(N_copy,two,&temp,&temp1);
-    copyNumber(&temp,&x);
+    //divide(N_copy,two,&temp,&temp1);
+
+    inverse3(two,&temp1,keta);
+    multiple(&N_copy,&temp1,&temp2);
+    divByN(temp2,&x,keta_temp2 - 1);
+
+    //copyNumber(&temp,&x);
     copyNumber(&x,&b);
     copyNumber(&x,&c);
     clearByZero(d);
    
+  
    
-   
-    while(1){
+   while(1){
         
         copyNumber(&b,&c);
         copyNumber(&x,&b);
+       
        /*
         printf("-----------------\n");
         printf("x = ");
@@ -830,9 +864,19 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
         printf("-----------------\n");
          */
 
-        divide(N_copy,x,&temp,&temp1);
+        //divide(N_copy,x,&temp,&temp1);
+
+        inverse3(x,&temp,keta);
+        multiple(&N_copy,&temp,&temp1);
+        divByN(temp1,&temp,keta_temp2 - 1);
+
         add(&x,&temp,&temp1);
-        divide(temp1,two,&x,&temp);
+
+        inverse3(two,&temp,keta);
+        multiple(&temp1,&temp,&temp2); 
+        divByN(temp2,&x,keta_temp2 - 1);
+
+       //divide(temp1,two,&x,&temp);
         
 
         sub(&b,&x,&temp1);
@@ -847,7 +891,7 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
 
 
     }
-    divByN(x,d,(keta_temp / 2) - 1);//----------------後の改善案、結局求まった桁の1/3捨てるんならもうxの値がketa_tempの桁数になったらいいのでは----------------
+    divByN(x,d,(((keta_temp- 1) / 2)));//----------------後の改善案、結局求まった桁の1/3捨てるんならもうxの値がketa_tempの桁数になったらいいのでは----------------
     return 1;
 
 }
@@ -944,9 +988,11 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
             multiple(&h,&h,&temp);
             divByN(temp,&temp1,keta_num -1 );
 
+            /*
             printf("h * h = ");
             DispNumber(&temp1);
             printf("\n");
+            */
 
             add(&h,&temp1,&temp);
             add(&keta,&temp,&temp1);

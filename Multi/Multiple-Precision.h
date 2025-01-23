@@ -1,4 +1,4 @@
-#define KETA 35
+#define KETA 70
 #define KISUU 1000000000
 #include <stdio.h>
 /*

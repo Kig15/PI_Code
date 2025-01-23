@@ -221,7 +221,8 @@ int main(int argc, char *argv[])
     //setInt(&b,583896384892894);
 
     
-    setInt(&a,12);
+    setInt(&a,3);
+   
     RootNutonRapson(&a,&b,NeedNum);
     //printf("%d\n",inverse3(a,&b,NeedNum));
     
@@ -230,10 +231,10 @@ int main(int argc, char *argv[])
     //sub(&a,&b,&c);
 
     multiple(&a,&NeedNum,&c);
-    multiple(&c,&NeedNum,&d);
-    multiple(&d,&NeedNum,&c);
-    clearByZero(&d);
-
+    //multiple(&d,&NeedNum,&c);
+    //multiple(&c,&NeedNum,&d);
+   
+    printf("%d\n",isKETA(NeedNum));
     DispNumber(&a);
     printf("\n");
     DispNumber(&b);
