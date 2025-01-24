@@ -806,7 +806,7 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     struct NUMBER x;//現在の平方根の近似値
     struct NUMBER b;//1つ前のｘ
     struct NUMBER c;//2つ前のｘ
-    struct NUMBER temp,temp1,temp2,two,N_copy;
+    struct NUMBER temp,temp1,temp2,two,two_inv;
     clearByZero(&x);
     int keta_temp = isKETA(keta);
 
@@ -831,22 +831,25 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     //clearByZero(&temp1);
     setInt(&two,2);
 
-    multiple(N,&keta,&N_copy);//桁は3とかじゃなくて　10000みたいに表します
+    //multiple(N,&keta,&N_copy);//桁は3とかじゃなくて　10000みたいに表します
 
     //divide(N_copy,two,&temp,&temp1);
-
-    inverse3(two,&temp1,keta);
-    multiple(&N_copy,&temp1,&temp2);
-    divByN(temp2,&x,keta_temp2 - 1);
+    inverse3(two,&two_inv,keta);
+    //inverse3(two,&temp1,keta);
+    multiple(N,&two_inv,&x);
+    //divByN(temp2,&x,keta_temp2 - 1);
 
     //copyNumber(&temp,&x);
     copyNumber(&x,&b);
-    copyNumber(&x,&c);
-    clearByZero(d);
-   
+    //copyNumber(&x,&c);
+    //clearByZero(d);
   
-   
+  
+   int roopNum = 0;
+   int judgeBreak =0;
    while(1){
+        roopNum++;
+        judgeBreak++;
         
         copyNumber(&b,&c);
         copyNumber(&x,&b);
@@ -868,32 +871,35 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
         //divide(N_copy,x,&temp,&temp1);
 
         inverse3(x,&temp,keta);
-        multiple(&N_copy,&temp,&temp1);
-        divByN(temp1,&temp,keta_temp2 - 1);
+        multiple(N,&temp,&temp1);
+        //divByN(temp1,&temp,keta_temp2 - 1);
 
-        add(&x,&temp,&temp1);
+        add(&x,&temp1,&temp);
 
-        inverse3(two,&temp,keta);
-        multiple(&temp1,&temp,&temp2); 
+        //inverse3(two,&temp,keta);
+        multiple(&temp,&two_inv,&temp2); 
         divByN(temp2,&x,keta_temp2 - 1);
 
        //divide(temp1,two,&x,&temp);
         
-
-        sub(&b,&x,&temp1);
-        if(isKETA(temp1) < 3){
-            break;
-        }//収束判定
-        sub(&c,&x,&temp1);
-        if(isKETA(temp1) < 3){
-            if(numComp(&b,&x) == -1) copyNumber(&b,&x);
-            break;
-        }//振動判定（要検証、これでいいのかは不明　無限ループが起こったらここを疑って）
-
+        if(judgeBreak >= 10){
+            judgeBreak = 0;
+            sub(&b,&x,&temp1);
+            if(isKETA(temp1) < 3){
+                break;
+            }//収束判定
+            sub(&c,&x,&temp1);
+            if(isKETA(temp1) < 3){
+                if(numComp(&b,&x) == -1) copyNumber(&b,&x);
+                break;
+            }//振動判定（要検証、これでいいのかは不明　無限ループが起こったらここを疑って）
+        }
 
     }
     //divByN(x,d,(((keta_temp- 1) / 2)));//----------------後の改善案、結局求まった桁の1/3捨てるんならもうxの値がketa_tempの桁数になったらいいのでは----------------
     copyNumber(&x,d);
+    printf("6√3ループ回数 = %d\n",roopNum);
+    fflush(stdout);
     return 1;
 
 }

@@ -1,4 +1,4 @@
-#define KETA 90 //111 * 9　桁求めるならその3倍要る
+#define KETA 135 //111 * 9　桁求めるならその4倍要る
 #define KISUU 1000000000
 #include <stdio.h>
 /*

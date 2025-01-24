@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
 
     
-    int keta_num = 22;//求めたい桁数　仮に100桁求めたかったら0を100個になるようにしろ（例：101）　あと0は偶数個にしろ
+    int keta_num = 33;//求めたい桁数　仮に100桁求めたかったら0を100個になるようにしろ（例：101）　あと0は偶数個にしろ
    
 
    struct NUMBER pi_temp;//円周率
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     setInt(&two,2);
     setInt(&three,3);
     setInt(&six,108);
-    NeedNum.n[keta_num] = 10; //求めたい桁数を設定()
+    NeedNum.n[keta_num] = 1000; //求めたい桁数を設定()
 
     //long long a_int = 100000;//ループ回数を指定
     //srandom((unsigned)time(NULL));
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     
 
     RootNutonRapson(&six,&six_M_RootThree,NeedNum);//ルート√108 (6√3)を求める
-    
+   
 
     int NeedNUM_KETA = isKETA(NeedNum);
     
