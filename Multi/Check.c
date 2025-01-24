@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
     start = tv.tv_sec + tv.tv_usec * 1e-6;
 
 
-    
-    int keta_num = 33;//求めたい桁数　仮に100桁求めたかったら0を100個になるようにしろ（例：101）　あと0は偶数個にしろ
+   
+    int keta_num =111;//求めたい桁数　仮に100桁求めたかったら0を100個になるようにしろ（例：101）　あと0は偶数個にしろ
    
 
    struct NUMBER pi_temp;//円周率
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     setInt(&two,2);
     setInt(&three,3);
     setInt(&six,108);
-    NeedNum.n[keta_num] = 1000; //求めたい桁数を設定()
+    NeedNum.n[keta_num] = 100000; //求めたい桁数を設定()
 
     //long long a_int = 100000;//ループ回数を指定
     //srandom((unsigned)time(NULL));
@@ -161,10 +161,10 @@ printf("\n");
     printf("上から%d桁まで一致\n",TruePI(pi));
     printf("ループ回数 = %lld\n",n_int);
 
-/**/
+ /**/
     
-/*
-  
+
+  /*
     srand((unsigned)time(NULL));
     struct NUMBER a,b,c,d;
     clearByZero(&a);
@@ -181,20 +181,23 @@ printf("\n");
     //setInt(&b,583896384892894);
 
     
-    setInt(&a,3);
+    SetRnd(&a,2);
+    SetRnd(&b,20);
+    add(&a,&b,&c);
+
    
-    RootNutonRapson(&a,&b,NeedNum);
+    //RootNutonRapson(&a,&b,NeedNum);
     //printf("%d\n",inverse3(a,&b,NeedNum));
     
     //RootNutonRapson(&a,&c,b);
     //divide(a,b,&c,&d);
     //sub(&a,&b,&c);
 
-    multiple(&a,&NeedNum,&c);
+    //multiple(&a,&NeedNum,&c);
     //multiple(&d,&NeedNum,&c);
     //multiple(&c,&NeedNum,&d);
    
-    printf("%d\n",isKETA(NeedNum));
+    //printf("%d\n",isKETA(NeedNum));
     DispNumber(&a);
     printf("\n");
     DispNumber(&b);
@@ -206,7 +209,7 @@ printf("\n");
     
 
     //printf("上から%d桁まで一致\n",TruePI(a));
-      */
+     */
 
 
   

@@ -217,6 +217,8 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
         
     }
     if(a->sign == -1 && b->sign == -1){
+       
+
         c->sign = -1;
         for(int i =0; i < KETA; i++){
         carry += a->n[i] + b->n[i];
@@ -226,6 +228,8 @@ int add(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
     }
     }
     else{
+        
+
         c->sign = 1;
         for(int i =0; i < KETA; i++){
         carry += a->n[i] + b->n[i];
@@ -806,14 +810,19 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     struct NUMBER x;//現在の平方根の近似値
     struct NUMBER b;//1つ前のｘ
     struct NUMBER c;//2つ前のｘ
-    struct NUMBER temp,temp1,temp2,two,two_inv;
+    struct NUMBER temp,temp1,two,two_inv,keta2;
     clearByZero(&x);
     int keta_temp = isKETA(keta);
 
-    mulByN(keta,&temp,keta_temp - 1);
-    copyNumber(&temp,&keta);
    
-    int keta_temp2 = isKETA(keta);
+
+    mulByN(keta,&keta2,keta_temp - 1);
+
+   
+
+    //copyNumber(&temp,&keta);
+   
+    //int keta_temp2 = isKETA(keta2);
    // printf("keta = %d\n",keta_temp2);
     
 
@@ -834,9 +843,9 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     //multiple(N,&keta,&N_copy);//桁は3とかじゃなくて　10000みたいに表します
 
     //divide(N_copy,two,&temp,&temp1);
-    inverse3(two,&two_inv,keta);
-    //inverse3(two,&temp1,keta);
-    multiple(N,&two_inv,&x);
+    inverse3(two,&two_inv,keta2);      //100 00
+    //inverse3(two,&temp1,keta);      
+    multiple(N,&two_inv,&x);          //100 00
     //divByN(temp2,&x,keta_temp2 - 1);
 
     //copyNumber(&temp,&x);
@@ -854,34 +863,25 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
         copyNumber(&b,&c);
         copyNumber(&x,&b);
        
-       /*
-        printf("-----------------\n");
-        printf("x = ");
-        DispNumber(&x);
-        printf("\n");
-        printf("b = ");
-        DispNumber(&b);
-        printf("\n");
-        printf("c = ");
-        DispNumber(&c);
-        printf("\n");
-        printf("-----------------\n");
-         */
+      
 
         //divide(N_copy,x,&temp,&temp1);
 
-        inverse3(x,&temp,keta);
-        multiple(N,&temp,&temp1);
+        inverse3(x,&temp,keta2);   //100 00
+        
+       
+        multiple(N,&temp,&temp1); //100 00
         //divByN(temp1,&temp,keta_temp2 - 1);
 
-        add(&x,&temp1,&temp);
+        add(&x,&temp1,&temp); //100 00
 
-        //inverse3(two,&temp,keta);
-        multiple(&temp,&two_inv,&temp2); 
-        divByN(temp2,&x,keta_temp2 - 1);
+        
+        //multiple(&temp,&two_inv,&temp2); //100 00 00 00
+        //divByN(temp2,&x,keta_temp2 - 1);
+       
+        divBy2(temp,&x); //100 00
 
        //divide(temp1,two,&x,&temp);
-        
         if(judgeBreak >= 10){
             judgeBreak = 0;
             sub(&b,&x,&temp1);
@@ -1160,4 +1160,30 @@ int divByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで�
    }
 
     return 0;
+}
+
+int divBy2(struct NUMBER a, struct NUMBER *b){//aの中の値を2で割る関数 余りを返す
+    long long Temp =0;//一時保存
+    int mod2 = 0;//2で割った時の余り ほぼCarry
+    clearByZero(b);
+
+    int j =0;
+    for(int i = KETA -1; i >= 0; i--){
+        if(a.n[i] != 0){
+            j = i;
+            break;
+        }
+    }//0サプ実装
+
+    for(int i = j; i >= 0; i--){
+      //printf("a.n[%d] = %lld\n",i,a.n[i]);
+      Temp = (a.n[i] + (mod2 * KISUU)) / 2;
+      //printf("Temp   = %lld\n",Temp);
+      mod2 = a.n[i] % 2;
+      //printf("mod2 = %d\n",mod2);
+      b->n[i] = Temp;
+     
+    }
+    return mod2;
+
 }

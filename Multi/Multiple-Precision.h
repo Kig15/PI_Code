@@ -1,4 +1,4 @@
-#define KETA 135 //111 * 9　桁求めるならその4倍要る
+#define KETA 447 //111 * 9　桁求めるならその4倍要る
 #define KISUU 1000000000
 #include <stdio.h>
 /*
@@ -89,3 +89,5 @@ int mulByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで�
 int divByN(struct NUMBER a, struct NUMBER *b, int n);//aの中の値を10^nで割る関数
 
 int divide_in(struct NUMBER a, struct NUMBER b, struct NUMBER *c, struct NUMBER *d);//逆数で割り算を行う関数
+
+int divBy2(struct NUMBER a, struct NUMBER *b);//2で割る事に特化した関数
