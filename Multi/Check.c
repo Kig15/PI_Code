@@ -8,6 +8,7 @@
 
 
 int TruePI(struct NUMBER pi);//返り値に桁
+void ProgressBar(int keta_num,int progress[10]);//進捗状況を表示するための関数
 
 
 
@@ -20,8 +21,8 @@ int main(int argc, char *argv[])
     start = tv.tv_sec + tv.tv_usec * 1e-6;
 
 
-    /*
-    int keta_num = 100;//求めたい桁数(偶数限定)
+    
+    int keta_num = 22;//求めたい桁数　仮に100桁求めたかったら0を100個になるようにしろ（例：101）　あと0は偶数個にしろ
    
 
    struct NUMBER pi_temp;//円周率
@@ -46,6 +47,7 @@ int main(int argc, char *argv[])
    struct NUMBER h;
    struct NUMBER n;//Σのn
    struct NUMBER n_mOne;//Σのn-1
+   struct NUMBER temp,temp1;
 
     clearByZero(&pi);
     clearByZero(&pi_temp);
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
     clearByZero(&d);
     clearByZero(&e);
     clearByZero(&f);
-    clearByZero(&g);
+    setInt(&g,1);
     clearByZero(&h);
     
     clearByZero(&n);
@@ -69,141 +71,99 @@ int main(int argc, char *argv[])
     setInt(&one_m,-1);
     setInt(&two,2);
     setInt(&three,3);
-    setInt(&six,6);
-    NeedNum.n[keta_num * 2] = 1; //求めたい桁数を設定(√3の計算のために2倍してます)
-    setInt(&a,100000); //ループ回数を指定
+    setInt(&six,108);
+    NeedNum.n[keta_num] = 10; //求めたい桁数を設定()
+
+    //long long a_int = 100000;//ループ回数を指定
     //srandom((unsigned)time(NULL));
 
-    RootNutonRapson(&three,&RootThree,NeedNum);//ルート3を求める
-    multiple(&six,&RootThree,&six_M_RootThree);//6√3を求める
-
-    NeedNum.n[keta_num * 2] = 0;
-    NeedNum.n[keta_num] = 1; //求めたい桁数を設定
     
+
+    RootNutonRapson(&six,&six_M_RootThree,NeedNum);//ルート√108 (6√3)を求める
+    
+
+    int NeedNUM_KETA = isKETA(NeedNum);
+    
+
+    //copyNumber(&NeedNum,&d);//dが分子の値
+    int d_sign = 1;
+    long long n_int = 0;//Σのnの値
+    int ans_keta =0; //(2n+1) * 3^n+1の逆数の桁数
+    int progress[10] ={NeedNUM_KETA / 10,NeedNUM_KETA * 2 / 10 ,NeedNUM_KETA * 3 /10,NeedNUM_KETA * 4 /10,NeedNUM_KETA * 5 /10,NeedNUM_KETA * 6 /10,NeedNUM_KETA * 7 /10,NeedNUM_KETA * 8 /10,NeedNUM_KETA * 9 /10,NeedNUM_KETA };//進捗状況を表示するための配列
+    
+   
+     //################################################## シャープの公式  #################################################################
+    while(1){
+   
+   
+    //setSign(&d,d_sign);
      
- while(numComp(&n,&a) == -1){
-   
-   
-    
-
-    divide(n,two,&b,&c);//cが１なら奇数　cが０なら偶数
 
     
+    setInt(&e,(2 * n_int) + 1);//eが(2n+1)  2n+1は10億ループとかしてもオーバーフローしないからlong longでいい
     
-    if(numComp(&c,&one) == 0){
-        struct NUMBER temp;
-        clearByZero(&temp);
-        copyNumber(&one_m,&temp);
-        multiple(&NeedNum,&temp,&d);
+    multiple(&g,&three,&temp);
+    copyNumber(&temp,&g);//gは3^n+1
+
+    multiple(&e,&g,&temp);//(2n+1) * 3^n+1
+
+    inverse3(temp,&temp1,NeedNum);//(2n+1) * 3^n+1の逆数を求める
+
+    setSign(&temp1,d_sign);//(2n+1) * 3^n+1の逆数に符号をつける
+
+    add(&temp1,&pi_temp,&temp);//(2n+1) * 3^n+1の逆数を足す Σだから
+
+    copyNumber(&temp,&pi_temp);//pi_tempに足した値をコピー
+
+  
+    if(d_sign == 1){
+        d_sign = -1;
     }
-    else{
-        
-        struct NUMBER temp;
-        clearByZero(&temp);
-       copyNumber(&one,&temp);
-       multiple(&NeedNum,&temp,&d);
-       
-         
-    }//dが分子の値(求めたい桁数倍されてます)
-
-   printf("----------\n");
-   printf("d = ");
-   DispNumber(&d);
-   printf("\n");
-
-    multiple(&n,&two,&b);
-    add(&b,&one,&e);//eが(2n+1)
-
-   printf("e = ");
-   DispNumber(&e);
-   printf("\n");
-    
-
-    if(numComp(&n,&one) == 0 ||numComp(&n,&one) == 1 ){
-        copyNumber(&n,&f);
-
-        struct NUMBER temp;
-        clearByZero(&temp);
-        setInt(&temp,3);
-
-        while(isZero(&f) == -1){
-       
-             multiple(&three,&temp,&g);
-             copyNumber(&g,&temp);
-
-             oneDecrement(&f);
-
-        }
+    else{//d_sign == -1
+        d_sign = 1;
     }
-    else{
-        
+  
 
-    copyNumber(&three,&g);
-    }//gは3^n+1
+     n_int++;
+     ans_keta = isKETA(temp1);
 
-   printf("g = ");
-   DispNumber(&g);
-   printf("\n");
+    ProgressBar(ans_keta,progress);
+    fflush(stdout);
+    //邪魔なら消して
     
-    
-
-    struct NUMBER temp1;
-    clearByZero(&temp1);
-    multiple(&e,&g,&temp1);
-
-    printf("temp1 = ");
-    DispNumber(&temp1);
-    printf("\n");
-
-    struct NUMBER temp2;
-    clearByZero(&temp2);
-    struct NUMBER temp3;
-    clearByZero(&temp3);
-    divide(d,temp1,&temp2,&temp3);
-   
-   printf("temp2 = ");
-   DispNumber(&temp2);
-   printf("\n");
-
-    add(&temp2,&h,&pi_temp);
-    copyNumber(&pi_temp,&h);
-    
-   printf("h = ");
-   DispNumber(&h);
-   printf("\n");
-
-
-
-   DispNumber(&n);
-   oneIncrement(&n);
-   
-    printf("\n");
-    if(isZero(&temp2) == 0){
+    if(ans_keta < 3){
         break;
-        }
     }
+
+  
+   
+  
+   
+}
+printf("\n");
+    
+   
+
+    multiple(&six_M_RootThree,&pi_temp,&temp);
+    divByN(temp,&pi,NeedNUM_KETA - 1);
     
     
-    printf("six_M_RootThree = ");
+    printf("求めたい桁数 = %d\n",NeedNUM_KETA);
+
+    printf("6√3 = ");
     DispNumber(&six_M_RootThree);
     printf("\n");
-
-    printf("pi_temp         = ");
-    DispNumber(&pi_temp);
-    printf("\n");
-
-
-    multiple(&six_M_RootThree,&pi_temp,&pi);
-    
-    printf("pi              = ");
+    printf("π   = ");
     DispNumber(&pi);
     printf("\n");
-
-    printf("上から%d桁まで一致\n",TruePI(pi));
-
-*/
     
 
+    printf("上から%d桁まで一致\n",TruePI(pi));
+    printf("ループ回数 = %lld\n",n_int);
+
+/**/
+    
+/*
   
     srand((unsigned)time(NULL));
     struct NUMBER a,b,c,d;
@@ -246,7 +206,7 @@ int main(int argc, char *argv[])
     
 
     //printf("上から%d桁まで一致\n",TruePI(a));
-     /* */
+      */
 
 
   
@@ -259,10 +219,9 @@ int main(int argc, char *argv[])
 
 
    
-    
+    //
     gettimeofday(&tv,NULL);
     end = tv.tv_sec + tv.tv_usec * 1e-6;
-
     printf("所要時間 = %f\n",end - start);
 
  return 0;
@@ -277,26 +236,140 @@ int TruePI(struct NUMBER pi){
         return -1;
     }
 
-    int j = 0;
-    for(int i = KETA - 1; i >= 0; i--){
-       if(pi.n[i] != 0){
-          j = i;
-          break;
-       }
-      
+   int keta_num = isKETA(pi);
+   int a = keta_num / 9;//基数で割った商
+   int b = keta_num % 9;//基数で割った余り
+   int c = 0; //0サプ用
+   for(int i = KETA -1; i >= 0; i--){
+        if(pi.n[i] != 0){
+            c = i;
+            break;
+        }
+    }//0サプ実装
+    int true_keeta = 0;//正しかった桁数
+
+    int temp =0,temp1=0;
+    char temp_c = '0';
+
+
+
+    if((a > 0) && (b > 0)){//aが0より大きくbが0より大きい
+        temp = pi.n[a];
+        int ten = 1;
+        for(int i = 1; i < b; i++){
+            ten *= 10;
+        }
+       
+        for(int i = 1; i <= b; i++){
+            if(i != b){
+                 temp1 = temp / ten;
+            }
+            else{
+                temp1 = temp;
+            }
+            temp_c = fgetc(fp);
+            if(temp_c != temp1 + '0'){
+                fclose(fp);
+                return true_keeta;
+            }
+            true_keeta++;
+            temp %= ten;
+            ten /= 10;
+
+        }
+
+        for(int i = c-1; i >= 0; i--){
+            temp = pi.n[i];
+            ten = 100000000;
+           
+            for(int j = 1; j <= 9; j++){
+                 if(j != 9){
+                    temp1 = temp / ten;
+                 }
+                 else{
+                    temp1 = temp;
+                }
+               
+                temp_c = fgetc(fp);
+                if(temp_c != temp1 + '0'){
+                    fclose(fp);
+                    return true_keeta;
+                }
+                true_keeta++;
+                temp %= ten;
+                ten /= 10;
+               
+            }
+        }
+        
     }
-    
-    int keeta = 0;
-    char c = 'o';
-    for(int i = j; i >= 0; i--){
-        c = fgetc(fp);
-       if( c != pi.n[i] + '0'){
-           break;
-       }
-       keeta++;
+    else if((a > 0) && (b == 0)){//aが0より大きくbが0
+        int ten = 1;
+         for(int i = c; i >= 0; i--){
+            temp = pi.n[i];
+            ten = 100000000;
+             for(int j = 1; j <= 9; j++){
+                   if(j != 9){
+                         temp1 = temp / ten;
+                    }
+                    else{
+                        temp1 = temp;
+                    }
+                  temp_c = fgetc(fp);
+                  if(temp_c != temp1 + '0'){
+                        fclose(fp);
+                        return true_keeta;
+                    }
+                 true_keeta++;
+                 temp %= ten;
+                 ten /= 10;
+                }
+            }   
+
     }
+    else{//aが0
+       temp = pi.n[a];
+        int ten = 1;
+        for(int i = 1; i < b; i++){
+            ten *= 10;
+        }
+        for(int i = 1; i <= b; i++){
+            if(i != b){
+                 temp1 = temp / ten;
+            }
+            else{
+                temp1 = temp;
+            }
+            temp_c = fgetc(fp);
+            if(temp_c != temp1 + '0'){
+                fclose(fp);
+                return true_keeta;
+            }
+            true_keeta++;
+            temp %= ten;
+            ten /= 10;
+
+        }
+    }
+
 
 
     fclose(fp);
-    return keeta;
+    return true_keeta;
+}
+
+void ProgressBar(int keta_num,int progress[10]){
+     printf("\r[");
+    for(int i = 9; i >= 1; i--){
+       
+        if(keta_num <= progress[i]){
+            printf("#");
+           
+        }
+        else{
+            printf("-");
+        }
+    }
+    printf("]");
+    
 }

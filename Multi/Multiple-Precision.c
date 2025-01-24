@@ -454,8 +454,6 @@ int simpleMultiple(long long a, long long b , long long *c){
 //掛け算を行う関数()
 int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
    struct NUMBER d,e;
-   clearByZero(&d);
-   clearByZero(&e);
    clearByZero(c);
    long long h =0;
    int l =0;
@@ -498,6 +496,8 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
 
 
    for(int i =0; i <= b_keta + 1; i++){
+    clearByZero(&d);
+    clearByZero(&e);
     for(int j = 0; j <= a_keta+ 1; j++){
        d.n[j] += h;
 
@@ -517,14 +517,16 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
         return -1;
     }
     
-    for(int k = 0; k < i; k++){
-        mulBy10(&d,&e);
-        copyNumber(&e,&d);
-    }
-    add(c,&d,&e);
-    copyNumber(&e,c);
-    clearByZero(&d);
-    clearByZero(&e);
+    //for(int k = 0; k < i; k++){
+    //  mulBy10(&d,&e);
+    //  copyNumber(&e,&d);
+    //}
+    mulByN(d,&e,i * 9);
+    //copyNumber(&e,&d);
+
+    add(c,&e,&d);
+    copyNumber(&d,c);
+   
    }//掛け算の処理　コメント一行で説明できるようなものではない
 
    if(l){
@@ -810,8 +812,7 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
 
     mulByN(keta,&temp,keta_temp - 1);
     copyNumber(&temp,&keta);
-    mulByN(keta,&temp,keta_temp - 1);
-    copyNumber(&temp,&keta);
+   
     int keta_temp2 = isKETA(keta);
    // printf("keta = %d\n",keta_temp2);
     
@@ -891,7 +892,8 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
 
 
     }
-    divByN(x,d,(((keta_temp- 1) / 2)));//----------------後の改善案、結局求まった桁の1/3捨てるんならもうxの値がketa_tempの桁数になったらいいのでは----------------
+    //divByN(x,d,(((keta_temp- 1) / 2)));//----------------後の改善案、結局求まった桁の1/3捨てるんならもうxの値がketa_tempの桁数になったらいいのでは----------------
+    copyNumber(&x,d);
     return 1;
 
 }
@@ -1039,12 +1041,13 @@ int mulByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで�
         return 0;
     }
 
-    clearByZero(b);
+    
     if(amari != 0){
     while(slide > 0){
         mulBy10(&a,b);
         copyNumber(b,&a);
         slide--;
+        
     }//どうあがいても消される桁を消す(ちょっとおもいかも)
 
     /*
@@ -1101,7 +1104,7 @@ int divByN(struct NUMBER a, struct NUMBER *b, int n){//aの中の値を10^nで�
         return 0;
     }
 
-    clearByZero(b);
+    
 
    if(amari != 0){
     while(slide > 0){
