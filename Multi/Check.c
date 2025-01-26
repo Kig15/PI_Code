@@ -71,16 +71,16 @@ int main(int argc, char *argv[])
     setInt(&one_m,-1);
     setInt(&two,2);
     setInt(&three,3);
-    setInt(&six,108);
-    NeedNum.n[keta_num] = 100000; //求めたい桁数を設定()
+    setInt(&six,18);
+    NeedNum.n[keta_num] = 1000; //求めたい桁数を設定()
 
     //long long a_int = 100000;//ループ回数を指定
     //srandom((unsigned)time(NULL));
 
     
 
-    RootNutonRapson(&six,&six_M_RootThree,NeedNum);//ルート√108 (6√3)を求める
-   
+    RootNutonRapson(&three,&temp,NeedNum);// 1/√3 を求める
+    multiple(&six,&temp,&six_M_RootThree);//6√3を求める
 
     int NeedNUM_KETA = isKETA(NeedNum);
     
@@ -174,19 +174,20 @@ printf("\n");
     //int keta_num = 10;//求めたい桁数(偶数限定)
     struct NUMBER NeedNum;//求めたい桁数
     clearByZero(&NeedNum);
-    NeedNum.n[11] = 10; //求めたい桁数を設定
+    NeedNum.n[111] = 10; //求めたい桁数を設定
     
     
     //setInt(&a,854986428640463);
     //setInt(&b,583896384892894);
 
     
-    SetRnd(&a,2);
-    SetRnd(&b,20);
-    add(&a,&b,&c);
+    setInt(&a,3);
+    
 
    
-    //RootNutonRapson(&a,&b,NeedNum);
+    RootNutonRapson(&a,&b,NeedNum);
+    multiple(&a,&NeedNum,&c);
+    multiple(&b,&a,&d);
     //printf("%d\n",inverse3(a,&b,NeedNum));
     
     //RootNutonRapson(&a,&c,b);

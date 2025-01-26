@@ -806,20 +806,133 @@ int isPrime(struct NUMBER a){//素数判定を行う関数　素数なら1 合�
 
 }
 
-int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニュートンラプソン法で平方根を求める関数 正常終了1 異常終了-1 NeedNumは二倍にするから、あらかじめ二倍にしておかなくてもよい
+int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニュートンラプソン法で平方根の逆数を求める関数 正常終了1 異常終了-1 NeedNumは二倍にするから、あらかじめ二倍にしておかなくてもよい
     struct NUMBER x;//現在の平方根の近似値
     struct NUMBER b;//1つ前のｘ
-    struct NUMBER c;//2つ前のｘ
-    struct NUMBER temp,temp1,two,two_inv,keta2;
-    clearByZero(&x);
-    int keta_temp = isKETA(keta);
-
+    struct NUMBER h;//1 - N * x^2
    
-
+    struct NUMBER temp,temp1,temp2,temp3,temp4,one,three,four,eight,eight_inv,keta2,N_copy;
+    
+    int keta_temp = isKETA(keta);
     mulByN(keta,&keta2,keta_temp - 1);
 
-   
+    clearByZero(d);
+    
+    mulByN(*N,&N_copy,keta_temp - 1);//N だけど足すようなので10^keta倍してる //100
 
+    int N_keta = isKETA(*N);
+   
+    setInt(&temp,2);
+    mulByN(temp,&x,keta_temp - 2 - N_keta);//0.2 //100
+   
+    
+
+    
+   
+    //定数の設定
+    
+    setInt(&one,1);//1
+    mulByN(one,&one,keta_temp - 1);//1 だけど足すようなので10^keta倍してる //100
+    setInt(&three,3);//3   //1
+    setInt(&four,4);//4    //4
+    setInt(&temp,8);
+    inverse3(temp,&temp1,keta);// 1/8 * 10^keta
+    copyNumber(&temp1,&eight_inv);//1/8 だけど足すようなので10^keta倍してる //100
+    mulByN(temp,&eight,keta_temp - 1);//8　だけど足すようなので10^keta倍してる //100
+   
+    
+
+   /*
+    printf("one       = ");
+    DispNumber(&one);
+    printf("\n");
+    printf("three     = ");
+    DispNumber(&three);
+    printf("\n");
+    printf("four      = ");
+    DispNumber(&four);
+    printf("\n");
+    printf("eight     = ");
+    DispNumber(&eight);
+    printf("\n");
+    printf("eight_inv = ");
+    DispNumber(&eight_inv);
+    printf("\n");
+    printf("keta      = ");
+    DispNumber(&keta);
+    printf("\n");
+    printf("keta2     = ");
+    DispNumber(&keta2);
+    printf("\n");
+    */
+
+     int roopNum = 0;
+    while(1){
+        roopNum++;
+
+
+        copyNumber(&x,&b);
+
+        //h = 1 - N * x^2　を求める
+        copyNumber(&b,&temp4);
+        multiple(N,&b,&temp);
+        multiple(&temp,&b,&temp1); // N*x^2  //100 00 keta = 100でも最大コレ　今後はこれで表記
+        divByN(temp1,&temp,keta_temp - 1);//N * x^2  //100
+        sub(&one,&temp,&h);//1 - N * x^2  //100
+
+       
+        //x = x / 8 *(8 + 3*h * 3* h^2) を求める
+        multiple(&three,&h,&temp);//3 * h  //100
+        multiple(&temp,&h,&temp1);//3 * h^2  //100 00
+        divByN(temp1,&temp2,keta_temp - 1);//3 * h^2  //100
+       
+       
+       
+        multiple(&four,&h,&temp3);//4 * h  //100
+
+       
+        add(&temp2,&temp3,&temp4);//3 * h^2 + 4 * h  //100 
+
+
+        add(&eight,&temp4,&temp2);//8 + 3 * h^2 + 4 * h  //100
+       
+        
+        
+
+        multiple(&eight_inv,&b,&temp3);//1/8 * x  //100 00
+        divByN(temp3,&temp4,keta_temp - 1);//1/8 * x  //100
+       
+
+        multiple(&temp2,&temp4,&temp3);//(8 + 3 * h^2 + 4 * h) * 1/8 * x  //100 00
+        divByN(temp3,&x,keta_temp - 1);//(8 + 3 * h^2 + 4 * h) * 1/8 * x  //100
+
+        
+
+          
+            if(isKETA(h) < 3){
+                break;
+            }//収束判定
+
+           
+
+
+
+    }
+
+    
+
+    
+
+
+
+
+    copyNumber(&x,d);
+    printf("6√3ループ回数 = %d\n",roopNum);
+    fflush(stdout);
+
+    return 1;
+   
+/*
     //copyNumber(&temp,&keta);
    
     //int keta_temp2 = isKETA(keta2);
@@ -901,6 +1014,8 @@ int RootNutonRapson(struct NUMBER *N, struct NUMBER *d,struct NUMBER keta){//ニ
     printf("6√3ループ回数 = %d\n",roopNum);
     fflush(stdout);
     return 1;
+*/
+
 
 }
 
