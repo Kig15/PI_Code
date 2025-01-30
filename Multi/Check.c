@@ -163,8 +163,8 @@ printf("\n");
 
  /**/
     
-
-  /*
+ /*
+  
     srand((unsigned)time(NULL));
     struct NUMBER a,b,c,d;
     clearByZero(&a);
@@ -181,13 +181,12 @@ printf("\n");
     //setInt(&b,583896384892894);
 
     
-    setInt(&a,3);
+    SetRnd(&a,30 );
+    SetRnd(&b,40);
     
 
    
-    RootNutonRapson(&a,&b,NeedNum);
-    multiple(&a,&NeedNum,&c);
-    multiple(&b,&a,&d);
+    multiple(&a,&b,&c);
     //printf("%d\n",inverse3(a,&b,NeedNum));
     
     //RootNutonRapson(&a,&c,b);
@@ -210,7 +209,7 @@ printf("\n");
     
 
     //printf("上から%d桁まで一致\n",TruePI(a));
-     */
+    */
 
 
   

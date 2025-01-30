@@ -457,7 +457,7 @@ int simpleMultiple(long long a, long long b , long long *c){
 
 //掛け算を行う関数()
 int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
-   struct NUMBER d,e;
+  
    clearByZero(c);
    long long h =0;
    int l =0;
@@ -500,10 +500,9 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
 
 
    for(int i =0; i <= b_keta + 1; i++){
-    clearByZero(&d);
-    clearByZero(&e);
+   
     for(int j = 0; j <= a_keta+ 1; j++){
-       d.n[j] += h;
+       
 
        
 
@@ -513,8 +512,12 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
        }
        //simpleMultiple(a->n[j],b->n[i],&h); <--ゴミ
        h = a->n[j] * b->n[i];
-       d.n[j] += h % KISUU;
-       h /= KISUU;
+       c->n[j + i] += h % KISUU;
+       c->n[j + i + 1] += h / KISUU;
+
+       c->n[j + i + 1] += c->n[j + i] / KISUU;
+       c->n[j + i] %= KISUU;
+       
 
     }
     if(h != 0){
@@ -525,11 +528,12 @@ int multiple(struct NUMBER *a, struct NUMBER *b, struct NUMBER *c){
     //  mulBy10(&d,&e);
     //  copyNumber(&e,&d);
     //}
-    mulByN(d,&e,i * 9);
+    
+    //mulByN(d,&e,i * 9);
     //copyNumber(&e,&d);
 
-    add(c,&e,&d);
-    copyNumber(&d,c);
+    //add(c,&e,&d);
+    //copyNumber(&d,c);
    
    }//掛け算の処理　コメント一行で説明できるようなものではない
 
@@ -1051,11 +1055,11 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
     struct NUMBER x;//現在の平方根の近似値
     struct NUMBER y;//1つ前のｘ
     struct NUMBER h;//作業用の値
-    struct NUMBER g;//収束判定用の値
+    //struct NUMBER g;//収束判定用の値
 
     struct NUMBER temp;
     struct NUMBER temp1;
-    //struct NUMBER temp2;
+    struct NUMBER temp2;
 
     
 
@@ -1092,11 +1096,18 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
     if(temp_int > 0){
         setInt(&x,1);
         temp_int -= 1;
-        mulByN(x,&temp,temp_int);
-        copyNumber(&temp,&x);
-        setInt(&temp1,2);
-        multiple(&x,&temp1,&temp);
-        copyNumber(&temp,&x);
+        int aaa = temp_int / 9;
+        int bbb = temp_int % 9;
+        int ccc = 1;
+        for(int i = 0; i < bbb; i++){
+            ccc *= 10;
+        }
+        x.n[aaa] =ccc * 2;
+        //mulByN(x,&temp,temp_int);
+        //copyNumber(&temp,&x);
+        //setInt(&temp1,2);
+        //multiple(&x,&temp1,&temp);
+        //copyNumber(&temp,&x);
         //x = 0.2 * 10^(-keta_a) * 10^(keta_num) の初期値を求める処理
 
        while(1){
@@ -1119,13 +1130,13 @@ int inverse3(struct NUMBER a, struct NUMBER *b,struct NUMBER keta){ //3次収束
 
             add(&h,&temp1,&temp);
             add(&keta,&temp,&temp1);
-            multiple(&y,&temp1,&x);
-            divByN(x,&temp,keta_num - 1);
-            copyNumber(&temp,&x);//x = y * (1.0 * keta + h + h * h)の計算
+            multiple(&y,&temp1,&temp2);
+            divByN(temp2,&x,keta_num - 1);
+            //copyNumber(&temp,&x);//x = y * (1.0 * keta + h + h * h)の計算
             
 
-            copyNumber(&h,&g);
-            setSign(&g,1);   //g = fabs(h)
+           // copyNumber(&h,&g);
+           // setSign(&g,1);   //g = fabs(h)
              
             
             
